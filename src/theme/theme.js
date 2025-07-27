@@ -1,4 +1,4 @@
-// sorteador-online/src/theme.js
+// sorteador-online/src/theme/theme.js
 import React from 'react';
 import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 import '@fontsource/roboto/300.css';

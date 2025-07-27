@@ -1,5 +1,6 @@
+// sorteador-online/src/App.jsx
 import React from 'react';
-import SorteadorOnline from './components/SorteadorOnline';
+import SorteadorOnline from 'features/sorteio/SorteioPage'
 
 function App() {
   return (
