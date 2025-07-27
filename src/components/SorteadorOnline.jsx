@@ -343,7 +343,7 @@ export default function SorteadorOnline() {
                         </div>
                         {item.semRepeticao && (
                           <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-                            Sem repetição
+                            Sorteado
                           </span>
                         )}
                       </div>
@@ -357,17 +357,6 @@ export default function SorteadorOnline() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-6 mt-12">
-        <div className="max-w-6xl mx-auto px-4 text-center text-gray-600">
-          <p className="text-sm">
-            Sorteio 100% seguro com <code className="bg-gray-100 px-2 py-1 rounded text-xs">crypto.getRandomValues()</code>
-          </p>
-          <p className="text-xs mt-1 opacity-75">
-            Algoritmo criptograficamente seguro - Sem viés estatístico
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

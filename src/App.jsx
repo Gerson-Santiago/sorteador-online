@@ -5,7 +5,7 @@ function App() {
   return (
     <div>
       <div className="bg-blue-600 text-white p-4 rounded mb-4">
-        Teste Tailwind funcionando!
+        Seminário de Boas Práticas no uso da tecnologia!
       </div>
       <SorteadorOnline />
     </div>
