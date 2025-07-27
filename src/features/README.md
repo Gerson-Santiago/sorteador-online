@@ -1,0 +1,1 @@
+Divisão para refatorar com mais simplicidade
