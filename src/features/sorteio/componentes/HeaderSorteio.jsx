@@ -17,7 +17,7 @@ export default function HeaderSorteio({
     <header className="bg-white shadow-sm border-b border-blue-100">
       <div className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          
+
           {/* Título com edição */}
           <div className="flex items-center gap-3">
             {editandoTitulo ? (

@@ -1,18 +1,15 @@
-//home/sant/projetos/sorteador-online/src/features/sorteio/SorteioPage.jsx
+//sorteador-online/src/features/sorteio/SorteioPage.jsx
 import React, { useState, useEffect } from 'react';
-import { getSecureRandomInt } from './sorteioUtils'; // Importa a função de sorteio seguro
-import HistoricoSorteios from './HistoricoSorteios'; // Importa o componente de histórico
-import SorteioConfig from './SorteioConfig'; // Importa o componente de configurações
-import BotoesSorteio from './componentes/BotoesSorteio'; // Importa os botões de sorteio
-import TituloEditable from './componentes/TituloEditavel'; // Importa o componente de título editável
-import DisplayNumeroSorteado from './componentes/DisplayNumeroSorteado'; // Importa o componente de exibição do número sorteado
+import { getSecureRandomInt } from './sorteioUtils';
+import HistoricoSorteios from './HistoricoSorteios';
+import SorteioConfig from './SorteioConfig';
+import BotoesSorteio from './componentes/BotoesSorteio';
+import TituloEditable from './componentes/TituloEditavel';
+import DisplayNumeroSorteado from './componentes/DisplayNumeroSorteado';
 
+import { Settings } from 'lucide-react';
 
-import {
-  Settings,
-} from 'lucide-react';
-
-export default function SorteadorOnline() {
+export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqueeSpeed, setMarqueeSpeed }) {
   // Estados principais
   const [eventoTitulo, setEventoTitulo] = useState('Sorteio de Números');
   const [editandoTitulo, setEditandoTitulo] = useState(false);
@@ -32,7 +29,7 @@ export default function SorteadorOnline() {
   // Números disponíveis para sorteio sem repetição
   const [numerosDisponiveis, setNumerosDisponiveis] = useState([]);
 
-  // Inicializar números disponíveis
+  // Inicializar números disponíveis ao alterar intervalo
   useEffect(() => {
     const nums = [];
     for (let i = config.minimo; i <= config.maximo; i++) {
@@ -107,13 +104,11 @@ export default function SorteadorOnline() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* @- Header */}
+      {/* Header */}
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-
-              {/* @- TituloEditavel  */}
               <TituloEditable
                 titulo={eventoTitulo}
                 setTitulo={setEventoTitulo}
@@ -122,10 +117,6 @@ export default function SorteadorOnline() {
                 onSalvar={salvarTitulo}
                 onCancelar={cancelarEdicaoTitulo}
               />
-
-
-
-
             </div>
 
             <button
@@ -142,22 +133,22 @@ export default function SorteadorOnline() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* @- Área Principal de Sorteio */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
 
-              {/* @- Configurações do Sorteio */}
               {mostrarConfig && (
                 <SorteioConfig
                   config={config}
                   setConfig={setConfig}
                   resetarSorteio={resetarSorteio}
                   onFechar={() => setMostrarConfig(false)}
+                  tituloMarquee={tituloMarquee}
+                  setTituloMarquee={setTituloMarquee}
+                  marqueeSpeed={marqueeSpeed}
+                  setMarqueeSpeed={setMarqueeSpeed}
                 />
               )}
 
-
-              {/* @- Display do Número Sorteado */}
               <div className="mb-8">
                 <DisplayNumeroSorteado
                   numero={numeroSorteado}
@@ -165,7 +156,6 @@ export default function SorteadorOnline() {
                 />
               </div>
 
-              {/* @- Botões de Sorteio */}
               <BotoesSorteio
                 onSortear={sortear}
                 animandoSorteio={animandoSorteio}
@@ -173,8 +163,6 @@ export default function SorteadorOnline() {
                 numerosDisponiveis={numerosDisponiveis}
               />
 
-
-              {/* @- Info sobre números disponíveis */}
               {config.semRepeticao && (
                 <div className="mt-4 text-sm text-gray-600">
                   Números disponíveis: {numerosDisponiveis.length}
@@ -188,7 +176,6 @@ export default function SorteadorOnline() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
