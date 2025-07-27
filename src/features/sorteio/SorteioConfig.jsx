@@ -114,7 +114,7 @@ export default function SorteioConfig({
             {/* Campo para editar a velocidade do marquee */}
             <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Velocidade do Marquee (segundos; 0 = parado)
+                    Velocidade do Marquee
                 </label>
                 <input
                     type="number"
