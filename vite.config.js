@@ -1,10 +1,6 @@
-// sorteador-online/vite.config.js  
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-
+// vite.config.js
 export default defineConfig({
-  base: '/sorteador-online/', 
+  base: '/',
   plugins: [react()],
   resolve: {
     alias: {
