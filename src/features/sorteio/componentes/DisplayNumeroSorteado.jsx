@@ -3,7 +3,7 @@ import React from 'react';
 export default function DisplayNumeroSorteado({ numero, animando }) {
   return (
     <div
-      className={`inline-flex items-center justify-center w-48 h-48 mx-auto rounded-full border-8 transition-all duration-500 ${animando
+      className={`inline-flex items-center justify-center w-72 h-72 mx-auto rounded-full border-8 transition-all duration-500 ${animando
           ? 'border-blue-300 bg-blue-50 animate-pulse'
           : 'border-blue-600 bg-gradient-to-br from-blue-500 to-blue-700'
         }`}
