@@ -1,3 +1,4 @@
+// sorteador-online/src/features/sorteio/componentes/TituloEditavel.jsx
 import React from 'react';
 import { Edit2, Check, X } from 'lucide-react';
 
@@ -48,3 +49,5 @@ export default function TituloEditable({
     </div>
   );
 }
+
+

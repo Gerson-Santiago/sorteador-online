@@ -26,7 +26,7 @@ export default function SorteadorOnline() {
     minimo: 1,
     maximo: 200,
     quantidade: 1,
-    semRepeticao: false
+    semRepeticao: true
   });
 
   // Números disponíveis para sorteio sem repetição

@@ -16,7 +16,7 @@ let theme = createTheme({
   typography: {
     fontFamily: 'Roboto, sans-serif',
   },
-  shape: { borderRadius: 16 },
+  shape: { borderRadius: 18 },
 });
 
 theme = responsiveFontSizes(theme);
