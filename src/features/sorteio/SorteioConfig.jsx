@@ -110,7 +110,6 @@ export default function SorteioConfig({
                 </div>
             </div>
 
-            {/* Configurações do Marquee */}
             {/* Campo para editar a velocidade do marquee */}
             <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -125,6 +124,12 @@ export default function SorteioConfig({
                 />
             </div>
 
+            {/* Código da página para ativar o ao vivo */}
+            <div>
+
+            </div>
+
+            {/* Botão para resetar o sorteio */}
             <button
                 onClick={resetarSorteio}
                 className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors font-medium"
