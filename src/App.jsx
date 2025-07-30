@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import MarqueeHeader from 'features/sorteio/componentes/MarqueeHeader';
 import SorteadorOnline from 'features/sorteio/SorteioPage';
+import AutorFooter from 'features/AutorFooter';
 
 function App() {
   const [tituloMarquee, setTituloMarquee] = useState(
@@ -21,8 +22,8 @@ function App() {
         marqueeSpeed={marqueeSpeed}
         setMarqueeSpeed={setMarqueeSpeed}
       />
+      <AutorFooter />
     </div>
   );
 }
-
 export default App;
