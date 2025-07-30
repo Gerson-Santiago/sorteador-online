@@ -6,10 +6,12 @@ import SorteioConfig from './SorteioConfig';
 import BotoesSorteio from './componentes/BotoesSorteio';
 import TituloEditable from './componentes/TituloEditavel';
 import DisplayNumeroSorteado from './componentes/DisplayNumeroSorteado';
+import UserSimplificado from './componentes/UserSimplificado'
+
 
 import { Settings } from 'lucide-react';
 
-export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqueeSpeed, setMarqueeSpeed }) {
+export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqueeSpeed, setMarqueeSpeed, user, onLogout }) {
   // Estados principais
   const [eventoTitulo, setEventoTitulo] = useState('Sorteio de Números');
   const [editandoTitulo, setEditandoTitulo] = useState(false);
@@ -107,6 +109,9 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-6xl mx-auto px-4 py-4">
+
+
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <TituloEditable
@@ -119,16 +124,23 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
               />
             </div>
 
-            <button
-              onClick={() => setMostrarConfig(!mostrarConfig)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-            >
-              <Settings size={18} />
-              <span className="hidden sm:inline">Configurações</span>
-            </button>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setMostrarConfig(!mostrarConfig)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                <Settings size={18} />
+                <span className="hidden sm:inline">Configurações</span>
+              </button>
+
+              <UserSimplificado user={user} onLogout={onLogout} />
+            </div>
           </div>
+
         </div>
       </header>
+
+
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
