@@ -1,5 +1,4 @@
 node_modules
-dist
 .env
 .vscode
 client_secrets.json
@@ -7,3 +6,4 @@ firebase.json
 firebase-debug.log
 package-lock.json
 package.jsonclient_secret.json
+#dist
