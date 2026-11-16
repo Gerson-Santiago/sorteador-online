@@ -16,7 +16,7 @@ export default function SorteioConfig({
     const [tituloTemp, setTituloTemp] = useState(tituloMarquee);
 
     const salvarTitulo = () => {
-        setTituloMarquee(tituloTemp.trim() || "Seminário de Boas Práticas no uso da tecnologia!");
+        setTituloMarquee(tituloTemp.trim() || "Seminário de Boas Práticas");
         setEditandoTitulo(false);
     };
 

@@ -6,7 +6,7 @@ import AutorFooter from 'features/AutorFooter';
 
 function App() {
   const [tituloMarquee, setTituloMarquee] = useState(
-    "Seminário de Boas Práticas no uso da tecnologia!"
+    "Seminário de Boas Práticas"
   );
   const [marqueeSpeed, setMarqueeSpeed] = useState(0);
 
