@@ -25,6 +25,7 @@ export function useModoJanela({ animandoSorteio, config, numerosDisponiveis, sor
   return {
     erro: miniPlayer.erro,
     janelaAberta: miniPlayer.janelaAberta,
+    zoom: miniPlayer.zoom,
     alternarModoJanela,
   };
 }

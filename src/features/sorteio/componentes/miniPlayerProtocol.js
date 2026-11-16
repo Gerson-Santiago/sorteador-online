@@ -11,11 +11,16 @@ export const MINI_PLAYER_MESSAGE = {
   READY: 'ready',
   STATE: 'state',
   DRAW: 'draw',
+  ZOOM: 'zoom',
 };
 
 export function limitarZoomMiniPlayer(zoom) {
   const limitado = Math.min(MINI_PLAYER_ZOOM.MAX, Math.max(MINI_PLAYER_ZOOM.MIN, zoom));
   return Math.round(limitado * 10) / 10;
+}
+
+export function calcularZoomMiniPlayer(zoomAtual, delta) {
+  return limitarZoomMiniPlayer(zoomAtual + delta);
 }
 
 export function criarUrlMiniPlayer(href) {
@@ -27,6 +32,8 @@ export function criarUrlMiniPlayer(href) {
 export function processarMensagemMiniPlayer({
   data,
   desabilitado,
+  zoom,
+  ajustarZoom,
   sortear,
   publicarEstado,
 }) {
@@ -34,10 +41,15 @@ export function processarMensagemMiniPlayer({
     publicarEstado({
       type: MINI_PLAYER_MESSAGE.STATE,
       disabled: desabilitado,
+      zoom,
     });
   }
 
   if (data.type === MINI_PLAYER_MESSAGE.DRAW && !desabilitado) {
     sortear(true);
+  }
+
+  if (data.type === MINI_PLAYER_MESSAGE.ZOOM) {
+    ajustarZoom(data.delta);
   }
 }

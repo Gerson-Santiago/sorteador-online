@@ -5,7 +5,6 @@ import {
   MINI_PLAYER_CHANNEL,
   MINI_PLAYER_MESSAGE,
   MINI_PLAYER_ZOOM,
-  limitarZoomMiniPlayer,
 } from './miniPlayerProtocol';
 
 export default function MiniPlayer() {
@@ -31,6 +30,7 @@ export default function MiniPlayer() {
       if (data.type !== MINI_PLAYER_MESSAGE.STATE) return;
 
       setDesabilitado(data.disabled);
+      if (Number.isFinite(data.zoom)) setZoom(data.zoom);
       setConectado(true);
       window.clearInterval(intervalo);
     };
@@ -48,7 +48,7 @@ export default function MiniPlayer() {
   };
 
   const ajustarZoom = (delta) => {
-    setZoom((atual) => limitarZoomMiniPlayer(atual + delta));
+    canalRef.current?.postMessage({ type: MINI_PLAYER_MESSAGE.ZOOM, delta });
   };
 
   return (
@@ -60,7 +60,7 @@ export default function MiniPlayer() {
             <button
               type="button"
               onClick={() => ajustarZoom(-MINI_PLAYER_ZOOM.STEP)}
-              disabled={zoom <= MINI_PLAYER_ZOOM.MIN}
+              disabled={!conectado || zoom <= MINI_PLAYER_ZOOM.MIN}
               aria-label="Diminuir zoom da mini janela"
               title="Diminuir zoom"
               className="rounded p-1 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
@@ -73,7 +73,7 @@ export default function MiniPlayer() {
             <button
               type="button"
               onClick={() => ajustarZoom(MINI_PLAYER_ZOOM.STEP)}
-              disabled={zoom >= MINI_PLAYER_ZOOM.MAX}
+              disabled={!conectado || zoom >= MINI_PLAYER_ZOOM.MAX}
               aria-label="Aumentar zoom da mini janela"
               title="Aumentar zoom"
               className="rounded p-1 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
@@ -91,7 +91,7 @@ export default function MiniPlayer() {
             </button>
           </div>
         </header>
-        <div className="space-y-3 p-4" style={{ zoom }}>
+        <div className="space-y-3 p-4">
           <BotaoSortearSemRepetir
             onSortear={sortear}
             animandoSorteio={!conectado}

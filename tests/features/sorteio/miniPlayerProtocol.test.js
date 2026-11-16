@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   criarUrlMiniPlayer,
+  calcularZoomMiniPlayer,
   MINI_PLAYER_MESSAGE,
   MINI_PLAYER_QUERY_PARAM,
   MINI_PLAYER_ZOOM,
@@ -33,6 +34,7 @@ describe('processarMensagemMiniPlayer', () => {
     processarMensagemMiniPlayer({
       data: { type: MINI_PLAYER_MESSAGE.READY },
       desabilitado: true,
+      zoom: 1.2,
       publicarEstado,
       sortear: vi.fn(),
     });
@@ -40,6 +42,7 @@ describe('processarMensagemMiniPlayer', () => {
     expect(publicarEstado).toHaveBeenCalledWith({
       type: MINI_PLAYER_MESSAGE.STATE,
       disabled: true,
+      zoom: 1.2,
     });
   });
 
@@ -79,5 +82,28 @@ describe('limitarZoomMiniPlayer', () => {
 
   it('arredonda o zoom para incrementos de dez por cento', () => {
     expect(limitarZoomMiniPlayer(1.16)).toBe(1.2);
+  });
+
+  it('aplica os passos de zoom ao nível atual e respeita os limites', () => {
+    expect(calcularZoomMiniPlayer(1, 0.1)).toBe(1.1);
+    expect(calcularZoomMiniPlayer(MINI_PLAYER_ZOOM.MAX, 0.1)).toBe(MINI_PLAYER_ZOOM.MAX);
+    expect(calcularZoomMiniPlayer(MINI_PLAYER_ZOOM.MIN, -0.1)).toBe(MINI_PLAYER_ZOOM.MIN);
+  });
+});
+
+describe('processarMensagemMiniPlayer zoom', () => {
+  it('encaminha os ajustes solicitados pela mini janela para a página principal', () => {
+    const ajustarZoom = vi.fn();
+
+    processarMensagemMiniPlayer({
+      data: { type: MINI_PLAYER_MESSAGE.ZOOM, delta: 0.1 },
+      desabilitado: false,
+      zoom: 1,
+      ajustarZoom,
+      sortear: vi.fn(),
+      publicarEstado: vi.fn(),
+    });
+
+    expect(ajustarZoom).toHaveBeenCalledWith(0.1);
   });
 });

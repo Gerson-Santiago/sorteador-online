@@ -4,6 +4,8 @@ import {
   criarUrlMiniPlayer,
   MINI_PLAYER_CHANNEL,
   MINI_PLAYER_MESSAGE,
+  MINI_PLAYER_ZOOM,
+  calcularZoomMiniPlayer,
   processarMensagemMiniPlayer,
 } from './miniPlayerProtocol';
 
@@ -18,12 +20,26 @@ export function useMiniPlayer({
   const canalRef = useRef(null);
   const sortearRef = useRef(sortear);
   const desabilitadoRef = useRef(true);
+  const [zoom, setZoom] = useState(MINI_PLAYER_ZOOM.DEFAULT);
   const [erro, setErro] = useState('');
   const [janelaAberta, setJanelaAberta] = useState(false);
 
   sortearRef.current = sortear;
   desabilitadoRef.current =
     animandoSorteio || semRepeticaoEsgotada(config, numerosDisponiveis);
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
+
+  useEffect(() => {
+    document.documentElement.style.zoom = String(zoom);
+  }, [zoom]);
+
+  useEffect(() => {
+    const zoomOriginal = document.documentElement.style.zoom;
+    return () => {
+      document.documentElement.style.zoom = zoomOriginal;
+    };
+  }, []);
 
   const fecharMiniJanela = useCallback(() => {
     if (janelaRef.current && !janelaRef.current.closed) {
@@ -42,6 +58,12 @@ export function useMiniPlayer({
       processarMensagemMiniPlayer({
         data,
         desabilitado: desabilitadoRef.current,
+        zoom: zoomRef.current,
+        ajustarZoom: (delta) => {
+          if (Number.isFinite(delta)) {
+            setZoom((atual) => calcularZoomMiniPlayer(atual, delta));
+          }
+        },
         sortear: (semRepeticao) => sortearRef.current(semRepeticao),
         publicarEstado: (estado) => canal.postMessage(estado),
       });
@@ -57,8 +79,9 @@ export function useMiniPlayer({
     canalRef.current?.postMessage({
       type: MINI_PLAYER_MESSAGE.STATE,
       disabled: desabilitadoRef.current,
+      zoom,
     });
-  }, [ativo, animandoSorteio, config, numerosDisponiveis]);
+  }, [ativo, animandoSorteio, config, numerosDisponiveis, zoom]);
 
   useEffect(() => {
     if (!ativo) {
@@ -104,6 +127,7 @@ export function useMiniPlayer({
   return {
     janelaAberta,
     erro,
+    zoom,
     abrirMiniJanela,
     fecharMiniJanela,
   };
