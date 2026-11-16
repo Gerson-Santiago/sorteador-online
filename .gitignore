@@ -7,3 +7,5 @@ firebase.json
 firebase-debug.log
 package-lock.json
 package.jsonclient_secret.json
+
+coverage

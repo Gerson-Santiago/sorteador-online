@@ -15,5 +15,10 @@ export default defineConfig({
   },
   test: {
     pool: 'threads',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+      include: ['src/**/*.js', 'src/**/*.jsx'],
+    },
   },
 });
