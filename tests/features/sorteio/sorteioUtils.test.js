@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { getSecureRandomInt, sortearNumeros } from "../../../src/features/sorteio/sorteioUtils";
+import { criarFaixa, getSecureRandomInt, sortearNumeros } from "../../../src/features/sorteio/sorteioUtils";
 
 if (typeof globalThis.window === "undefined") {
   globalThis.window = { crypto: globalThis.crypto };
@@ -27,6 +27,29 @@ describe("getSecureRandomInt", () => {
 
   it("lança erro para limites fracionários", () => {
     expect(() => getSecureRandomInt(1.5, 3)).toThrow();
+  });
+
+  it("funciona com um intervalo de exatamente 2 ** 32 valores", () => {
+    vi.spyOn(globalThis.window.crypto, "getRandomValues").mockImplementation((array) => {
+      array[0] = 0xFFFFFFFF;
+      return array;
+    });
+
+    expect(getSecureRandomInt(0, 2 ** 32 - 1)).toBe(2 ** 32 - 1);
+  });
+
+  it("lança RangeError para intervalos maiores que 2 ** 32 valores", () => {
+    expect(() => getSecureRandomInt(0, 2 ** 32)).toThrow(RangeError);
+  });
+});
+
+describe("criarFaixa", () => {
+  it("cria uma faixa inclusiva de 1 a 5", () => {
+    expect(criarFaixa(1, 5)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it("cria uma faixa com um único valor quando mínimo e máximo são iguais", () => {
+    expect(criarFaixa(4, 4)).toEqual([4]);
   });
 });
 

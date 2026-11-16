@@ -12,8 +12,11 @@ export function getSecureRandomInt(min, max) {
     throw new Error("Intervalo inválido");
   }
 
-  const maxUint32 = 0xFFFFFFFF;
-  const limit = Math.floor(maxUint32 / range) * range;
+  const uint32Range = 2 ** 32;
+  if (range > uint32Range) {
+    throw new RangeError("O intervalo não pode exceder 2 ** 32 valores.");
+  }
+  const limit = Math.floor(uint32Range / range) * range;
 
   const array = new Uint32Array(1);
   let randomNumber;
@@ -24,6 +27,14 @@ export function getSecureRandomInt(min, max) {
   } while (randomNumber >= limit);
 
   return min + (randomNumber % range);
+}
+
+export function criarFaixa(minimo, maximo) {
+  const numeros = [];
+  for (let numero = minimo; numero <= maximo; numero++) {
+    numeros.push(numero);
+  }
+  return numeros;
 }
 
 export function sortearNumeros({

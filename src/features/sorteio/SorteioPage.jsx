@@ -1,6 +1,6 @@
 //sorteador-online/src/features/sorteio/SorteioPage.jsx
 import React, { useState, useEffect } from 'react';
-import { sortearNumeros } from './sorteioUtils';
+import { criarFaixa, sortearNumeros } from './sorteioUtils';
 import HistoricoSorteios from './HistoricoSorteios';
 import SorteioConfig from './SorteioConfig';
 import BotoesSorteio from './componentes/BotoesSorteio';
@@ -31,11 +31,7 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
 
   // Inicializar números disponíveis ao alterar intervalo
   useEffect(() => {
-    const nums = [];
-    for (let i = config.minimo; i <= config.maximo; i++) {
-      nums.push(i);
-    }
-    setNumerosDisponiveis(nums);
+    setNumerosDisponiveis(criarFaixa(config.minimo, config.maximo));
   }, [config.minimo, config.maximo]);
 
   // Função principal de sorteio
@@ -85,11 +81,7 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
   const resetarSorteio = () => {
     setHistorico([]);
     setNumeroSorteado(null);
-    const nums = [];
-    for (let i = config.minimo; i <= config.maximo; i++) {
-      nums.push(i);
-    }
-    setNumerosDisponiveis(nums);
+    setNumerosDisponiveis(criarFaixa(config.minimo, config.maximo));
   };
 
   // Salvar título editado
