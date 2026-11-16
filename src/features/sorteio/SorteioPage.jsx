@@ -1,7 +1,7 @@
 // src/features/sorteio/SorteioPage.jsx
 import { useState } from 'react';
 import { useSorteio } from './useSorteio';
-import { useModoApresentacao } from './useModoApresentacao';
+import { useModoJanela } from './useModoJanela';
 import { useEvento } from './EventoContext';
 import HistoricoSorteios from './HistoricoSorteios';
 import SorteioConfig from './SorteioConfig';
@@ -9,7 +9,7 @@ import BotoesSorteio from './componentes/BotoesSorteio';
 import MarqueeHeader from './componentes/MarqueeHeader';
 import TituloEditavel from './componentes/TituloEditavel';
 import DisplayNumeroSorteado from './componentes/DisplayNumeroSorteado';
-import { Maximize, Minimize, Settings } from 'lucide-react';
+import { AppWindow, Settings } from 'lucide-react';
 
 /**
  * Página principal do sorteador.
@@ -34,15 +34,7 @@ export default function SorteadorOnline() {
     resetarSorteio,
   } = useSorteio();
 
-  const {
-    paginaRef,
-    modoApresentacao,
-    erro: erroTelaCheia,
-    miniJanelaAberta,
-    iniciarApresentacao,
-    sairDaApresentacao,
-    abrirMiniJanela,
-  } = useModoApresentacao({
+  const { erro, janelaAberta, alternarModoJanela } = useModoJanela({
     animandoSorteio,
     config,
     numerosDisponiveis,
@@ -61,94 +53,59 @@ export default function SorteadorOnline() {
   };
 
   return (
-    <div
-      ref={paginaRef}
-      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100"
-    >
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <MarqueeHeader titulo={marqueeTexto} speed={marqueeSpeed} />
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {modoApresentacao ? (
-              <h1 className="text-xl font-semibold text-gray-800">{titulo}</h1>
-            ) : (
-              <TituloEditavel
-                titulo={titulo}
-                setTitulo={setTitulo}
-                editando={editandoTitulo}
-                setEditando={setEditandoTitulo}
-                onIniciarEdicao={iniciarEdicaoTitulo}
-                onSalvar={salvarTitulo}
-                onCancelar={cancelarEdicaoTitulo}
-              />
-            )}
+            <TituloEditavel
+              titulo={titulo}
+              setTitulo={setTitulo}
+              editando={editandoTitulo}
+              setEditando={setEditandoTitulo}
+              onIniciarEdicao={iniciarEdicaoTitulo}
+              onSalvar={salvarTitulo}
+              onCancelar={cancelarEdicaoTitulo}
+            />
 
             <div className="flex items-center gap-2">
-              {!modoApresentacao && (
-                <>
-                  <button
-                    onClick={() => setMostrarConfig((v) => !v)}
-                    aria-label="Configurações"
-                    title="Configurações"
-                    className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <Settings size={18} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setMostrarConfig(false);
-                      iniciarApresentacao();
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
-                  >
-                    <Maximize size={18} />
-                    APRESENTAR
-                  </button>
-                </>
-              )}
-              {modoApresentacao && (
-                <>
-                  {!miniJanelaAberta && (
-                    <button
-                      onClick={abrirMiniJanela}
-                      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                    >
-                      <Maximize size={18} />
-                      Abrir mini janela
-                    </button>
-                  )}
-                  <button
-                    onClick={sairDaApresentacao}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-                  >
-                    <Minimize size={18} />
-                    <span className="hidden sm:inline">Sair da apresentação</span>
-                    <span className="sm:hidden">Sair</span>
-                  </button>
-                </>
-              )}
+              <button
+                onClick={() => setMostrarConfig((v) => !v)}
+                aria-label="Configurações"
+                title="Configurações"
+                className="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Settings size={18} />
+              </button>
+              <button
+                onClick={() => {
+                  if (!janelaAberta) setMostrarConfig(false);
+                  alternarModoJanela();
+                }}
+                aria-label={janelaAberta ? 'Fechar janela do sorteio' : 'Abrir janela do sorteio'}
+                className={`flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors font-semibold ${
+                  janelaAberta
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-indigo-600 hover:bg-indigo-700'
+                }`}
+              >
+                <AppWindow size={18} />
+                {janelaAberta ? 'JANELA ABERTA' : 'MODO JANELA'}
+              </button>
             </div>
           </div>
         </div>
       </header>
 
-      <div
-        className={`mx-auto px-4 py-8 ${
-          modoApresentacao ? 'max-w-[1600px] lg:py-10' : 'max-w-6xl'
-        }`}
-      >
-        {erroTelaCheia && (
+      <div className="mx-auto max-w-6xl px-4 py-8">
+        {erro && (
           <p role="status" className="mb-4 text-center text-sm text-amber-700">
-            {erroTelaCheia}
+            {erro}
           </p>
         )}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div
-              className={`rounded-2xl shadow-lg p-8 text-center ${
-                modoApresentacao ? 'lg:p-12' : ''
-              } bg-white`}
-            >
+            <div className="rounded-2xl bg-white p-8 text-center shadow-lg">
               {mostrarConfig && (
                 <SorteioConfig
                   config={config}
@@ -162,7 +119,6 @@ export default function SorteadorOnline() {
                 <DisplayNumeroSorteado
                   numero={numeroSorteado}
                   animando={animandoSorteio}
-                  apresentacao={modoApresentacao}
                 />
               </div>
 
@@ -171,7 +127,6 @@ export default function SorteadorOnline() {
                 animandoSorteio={animandoSorteio}
                 config={config}
                 numerosDisponiveis={numerosDisponiveis}
-                mostrarBotaoSemRepetir={!modoApresentacao}
               />
 
               {config.semRepeticao && (
