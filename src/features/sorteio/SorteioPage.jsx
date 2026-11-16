@@ -1,8 +1,7 @@
 // src/features/sorteio/SorteioPage.jsx
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSorteio } from './useSorteio';
-import { semRepeticaoEsgotada } from './componentes/sorteioButtonUtils';
-import { MINI_PLAYER_CHANNEL, MINI_PLAYER_MESSAGE } from './componentes/miniPlayerProtocol';
+import { useModoApresentacao } from './useModoApresentacao';
 import { useEvento } from './EventoContext';
 import HistoricoSorteios from './HistoricoSorteios';
 import SorteioConfig from './SorteioConfig';
@@ -24,15 +23,6 @@ export default function SorteadorOnline() {
   const [editandoTitulo, setEditandoTitulo] = useState(false);
   const [tituloAnterior, setTituloAnterior] = useState('');
   const [mostrarConfig, setMostrarConfig] = useState(false);
-  const [modoApresentacao, setModoApresentacao] = useState(false);
-  const [erroTelaCheia, setErroTelaCheia] = useState('');
-  const paginaRef = useRef(null);
-  const miniJanelaRef = useRef(null);
-  const canalMiniPlayerRef = useRef(null);
-  const sortearSemRepetirRef = useRef(null);
-  const miniPlayerDesabilitadoRef = useRef(true);
-  const [miniJanelaAberta, setMiniJanelaAberta] = useState(false);
-
   const {
     config,
     setConfig,
@@ -44,9 +34,20 @@ export default function SorteadorOnline() {
     resetarSorteio,
   } = useSorteio();
 
-  sortearSemRepetirRef.current = () => sortear(true);
-  miniPlayerDesabilitadoRef.current =
-    animandoSorteio || semRepeticaoEsgotada(config, numerosDisponiveis);
+  const {
+    paginaRef,
+    modoApresentacao,
+    erro: erroTelaCheia,
+    miniJanelaAberta,
+    iniciarApresentacao,
+    sairDaApresentacao,
+    abrirMiniJanela,
+  } = useModoApresentacao({
+    animandoSorteio,
+    config,
+    numerosDisponiveis,
+    sortear,
+  });
 
   const iniciarEdicaoTitulo = () => {
     setTituloAnterior(titulo); // salva o valor real antes de editar
@@ -57,129 +58,6 @@ export default function SorteadorOnline() {
   const cancelarEdicaoTitulo = () => {
     setTitulo(tituloAnterior); // restaura o valor anterior — sem hardcode
     setEditandoTitulo(false);
-  };
-
-  useEffect(() => {
-    const sincronizarTelaCheia = () => {
-      if (document.fullscreenElement !== paginaRef.current) {
-        setModoApresentacao(false);
-      }
-    };
-
-    document.addEventListener('fullscreenchange', sincronizarTelaCheia);
-    return () => document.removeEventListener('fullscreenchange', sincronizarTelaCheia);
-  }, []);
-
-  useEffect(() => {
-    if (!modoApresentacao || !('BroadcastChannel' in window)) return undefined;
-
-    const canal = new BroadcastChannel(MINI_PLAYER_CHANNEL);
-    canalMiniPlayerRef.current = canal;
-    canal.onmessage = ({ data }) => {
-      if (data.type === MINI_PLAYER_MESSAGE.READY) {
-        canal.postMessage({
-          type: MINI_PLAYER_MESSAGE.STATE,
-          disabled: miniPlayerDesabilitadoRef.current,
-        });
-      }
-
-      if (data.type === MINI_PLAYER_MESSAGE.DRAW && !miniPlayerDesabilitadoRef.current) {
-        sortearSemRepetirRef.current();
-      }
-    };
-
-    return () => {
-      canal.close();
-      canalMiniPlayerRef.current = null;
-    };
-  }, [modoApresentacao]);
-
-  useEffect(() => {
-    canalMiniPlayerRef.current?.postMessage({
-      type: MINI_PLAYER_MESSAGE.STATE,
-      disabled: miniPlayerDesabilitadoRef.current,
-    });
-  }, [modoApresentacao, animandoSorteio, config, numerosDisponiveis]);
-
-  useEffect(() => {
-    if (!modoApresentacao) {
-      if (miniJanelaRef.current && !miniJanelaRef.current.closed) {
-        miniJanelaRef.current.close();
-      }
-      miniJanelaRef.current = null;
-      setMiniJanelaAberta(false);
-      return undefined;
-    }
-
-    const verificarJanela = window.setInterval(() => {
-      const aberta = Boolean(miniJanelaRef.current && !miniJanelaRef.current.closed);
-      setMiniJanelaAberta(aberta);
-    }, 500);
-
-    return () => window.clearInterval(verificarJanela);
-  }, [modoApresentacao]);
-
-  const abrirMiniJanela = () => {
-    if (miniJanelaRef.current && !miniJanelaRef.current.closed) {
-      miniJanelaRef.current.focus();
-      return;
-    }
-
-    if (!('BroadcastChannel' in window)) {
-      setErroTelaCheia('Este navegador não oferece suporte à comunicação com a mini janela.');
-      return;
-    }
-
-    const urlMiniPlayer = new URL(window.location.href);
-    urlMiniPlayer.searchParams.set('mini-player', '1');
-    const miniJanela = window.open(
-      urlMiniPlayer.href,
-      'sorteador-mini-player',
-      'popup=yes,width=360,height=230,resizable=yes'
-    );
-
-    if (!miniJanela) {
-      setMiniJanelaAberta(false);
-      setErroTelaCheia('O navegador bloqueou a mini janela. Permita pop-ups para abrir o mini sorteador.');
-      return;
-    }
-
-    miniJanelaRef.current = miniJanela;
-    setMiniJanelaAberta(true);
-    setErroTelaCheia('');
-  };
-
-  const apresentar = () => {
-    setMostrarConfig(false);
-    setErroTelaCheia('');
-    setModoApresentacao(true);
-
-    const elementoApresentacao = paginaRef.current;
-    if (!elementoApresentacao?.requestFullscreen) {
-      setErroTelaCheia('Este navegador não oferece suporte ao modo de tela cheia.');
-      return;
-    }
-
-    elementoApresentacao.requestFullscreen().catch(() => {
-      setErroTelaCheia('Não foi possível ativar a tela cheia. Você ainda pode usar o modo apresentação.');
-    });
-  };
-
-  const sairDaApresentacao = async () => {
-    if (miniJanelaRef.current && !miniJanelaRef.current.closed) {
-      miniJanelaRef.current.close();
-    }
-    miniJanelaRef.current = null;
-    setMiniJanelaAberta(false);
-
-    if (document.fullscreenElement === paginaRef.current) {
-      try {
-        await document.exitFullscreen();
-      } catch {
-        setErroTelaCheia('Não foi possível sair da tela cheia pelo navegador. Pressione Esc para sair.');
-      }
-    }
-    setModoApresentacao(false);
   };
 
   return (
@@ -217,7 +95,10 @@ export default function SorteadorOnline() {
                     <Settings size={18} />
                   </button>
                   <button
-                    onClick={apresentar}
+                    onClick={() => {
+                      setMostrarConfig(false);
+                      iniciarApresentacao();
+                    }}
                     className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
                   >
                     <Maximize size={18} />

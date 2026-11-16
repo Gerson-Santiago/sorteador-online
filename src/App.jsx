@@ -1,6 +1,7 @@
 // src/App.jsx
 import { EventoProvider } from 'features/sorteio/EventoContext';
 import MiniPlayer from 'features/sorteio/componentes/MiniPlayer';
+import { MINI_PLAYER_QUERY_PARAM } from 'features/sorteio/componentes/miniPlayerProtocol';
 import SorteadorOnline from 'features/sorteio/SorteioPage';
 import AutorFooter from 'features/AutorFooter';
 
@@ -9,7 +10,9 @@ import AutorFooter from 'features/AutorFooter';
  * Separado de App para poder usar useEvento() dentro do provider.
  */
 function AppContent() {
-  const isMiniPlayer = new URLSearchParams(window.location.search).has('mini-player');
+  const isMiniPlayer = new URLSearchParams(window.location.search).has(
+    MINI_PLAYER_QUERY_PARAM
+  );
 
   if (isMiniPlayer) return <MiniPlayer />;
 
