@@ -1,6 +1,6 @@
 //sorteador-online/src/features/sorteio/SorteioPage.jsx
 import React, { useState, useEffect } from 'react';
-import { getSecureRandomInt } from './sorteioUtils';
+import { sortearNumeros } from './sorteioUtils';
 import HistoricoSorteios from './HistoricoSorteios';
 import SorteioConfig from './SorteioConfig';
 import BotoesSorteio from './componentes/BotoesSorteio';
@@ -49,35 +49,35 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
     setNumeroSorteado(null);
 
     setTimeout(() => {
-      const numerosSorteados = [];
-
-      for (let i = 0; i < config.quantidade; i++) {
-        let numero;
+      try {
+        const { sorteados, restantes } = sortearNumeros({
+          minimo: config.minimo,
+          maximo: config.maximo,
+          quantidade: config.quantidade,
+          semRepeticao,
+          disponiveis: [...numerosDisponiveis]
+        });
 
         if (semRepeticao) {
-          if (numerosDisponiveis.length === 0) break;
-          const indice = getSecureRandomInt(0, numerosDisponiveis.length - 1);
-          numero = numerosDisponiveis[indice];
-          setNumerosDisponiveis(prev => prev.filter((_, idx) => idx !== indice));
-        } else {
-          numero = getSecureRandomInt(config.minimo, config.maximo);
+          setNumerosDisponiveis(restantes);
         }
 
-        numerosSorteados.push(numero);
+        const resultado = sorteados.length === 1 ? sorteados[0] : sorteados;
+        setNumeroSorteado(resultado);
+
+        const novoItem = {
+          id: Date.now(),
+          numeros: sorteados,
+          timestamp: new Date().toLocaleTimeString('pt-BR'),
+          semRepeticao
+        };
+
+        setHistorico(prev => [novoItem, ...prev]);
+      } catch (error) {
+        alert(error instanceof Error ? error.message : String(error));
+      } finally {
+        setAnimandoSorteio(false);
       }
-
-      const resultado = numerosSorteados.length === 1 ? numerosSorteados[0] : numerosSorteados;
-      setNumeroSorteado(resultado);
-
-      const novoItem = {
-        id: Date.now(),
-        numeros: numerosSorteados,
-        timestamp: new Date().toLocaleTimeString('pt-BR'),
-        semRepeticao
-      };
-
-      setHistorico(prev => [novoItem, ...prev]);
-      setAnimandoSorteio(false);
     }, 2000);
   };
 
