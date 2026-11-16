@@ -1,29 +1,33 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import { EventoProvider, useEvento } from 'features/sorteio/EventoContext';
 import MarqueeHeader from 'features/sorteio/componentes/MarqueeHeader';
 import SorteadorOnline from 'features/sorteio/SorteioPage';
 import AutorFooter from 'features/AutorFooter';
 
-function App() {
-  const [tituloMarquee, setTituloMarquee] = useState(
-    "Seminário de Boas Práticas"
-  );
-  const [marqueeSpeed, setMarqueeSpeed] = useState(0);
-
+/**
+ * Conteúdo interno que consome o EventoContext.
+ * Separado de App para poder usar useEvento() dentro do provider.
+ */
+function AppContent() {
+  const { marqueeTexto, marqueeSpeed } = useEvento();
   return (
     <div>
-      <MarqueeHeader 
-        titulo={tituloMarquee} 
-        speed={marqueeSpeed} 
-      />
-      <SorteadorOnline 
-        tituloMarquee={tituloMarquee} 
-        setTituloMarquee={setTituloMarquee}
-        marqueeSpeed={marqueeSpeed}
-        setMarqueeSpeed={setMarqueeSpeed}
-      />
+      <MarqueeHeader titulo={marqueeTexto} speed={marqueeSpeed} />
+      <SorteadorOnline />
       <AutorFooter />
     </div>
   );
 }
-export default App;
+
+/**
+ * Raiz da aplicação.
+ * EventoProvider envolve tudo — elimina o prop drilling de titulo/marquee
+ * que antes atravessava App → SorteioPage → SorteioConfig.
+ */
+export default function App() {
+  return (
+    <EventoProvider>
+      <AppContent />
+    </EventoProvider>
+  );
+}

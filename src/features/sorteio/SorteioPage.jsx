@@ -1,118 +1,66 @@
-//sorteador-online/src/features/sorteio/SorteioPage.jsx
-import React, { useState, useEffect } from 'react';
-import { criarFaixa, sortearNumeros } from './sorteioUtils';
+// src/features/sorteio/SorteioPage.jsx
+import { useState } from 'react';
+import { useSorteio } from './useSorteio';
+import { useEvento } from './EventoContext';
 import HistoricoSorteios from './HistoricoSorteios';
 import SorteioConfig from './SorteioConfig';
 import BotoesSorteio from './componentes/BotoesSorteio';
-import TituloEditable from './componentes/TituloEditavel';
+import TituloEditavel from './componentes/TituloEditavel';
 import DisplayNumeroSorteado from './componentes/DisplayNumeroSorteado';
-
 import { Settings } from 'lucide-react';
 
-export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqueeSpeed, setMarqueeSpeed }) {
-  // Estados principais
-  const [eventoTitulo, setEventoTitulo] = useState('Sorteio de Números');
+/**
+ * Página principal do sorteador.
+ * Toda a lógica de negócio vive em useSorteio().
+ * Configurações de evento (título, marquee) vêm do EventoContext.
+ * Sem prop drilling.
+ */
+export default function SorteadorOnline() {
+  const { titulo, setTitulo } = useEvento();
+
   const [editandoTitulo, setEditandoTitulo] = useState(false);
-  const [numeroSorteado, setNumeroSorteado] = useState(null);
-  const [historico, setHistorico] = useState([]);
-  const [animandoSorteio, setAnimandoSorteio] = useState(false);
+  const [tituloAnterior, setTituloAnterior] = useState('');
   const [mostrarConfig, setMostrarConfig] = useState(false);
 
-  // Configurações do sorteio
-  const [config, setConfig] = useState({
-    minimo: 1,
-    maximo: 200,
-    quantidade: 1,
-    semRepeticao: true
-  });
+  const {
+    config,
+    setConfig,
+    numerosDisponiveis,
+    numeroSorteado,
+    historico,
+    animandoSorteio,
+    sortear,
+    resetarSorteio,
+  } = useSorteio();
 
-  // Números disponíveis para sorteio sem repetição
-  const [numerosDisponiveis, setNumerosDisponiveis] = useState([]);
-
-  // Inicializar números disponíveis ao alterar intervalo
-  useEffect(() => {
-    setNumerosDisponiveis(criarFaixa(config.minimo, config.maximo));
-  }, [config.minimo, config.maximo]);
-
-  // Função principal de sorteio
-  const sortear = (semRepeticao = false) => {
-    if (semRepeticao && numerosDisponiveis.length === 0) {
-      alert('Todos os números já foram sorteados!');
-      return;
-    }
-
-    setAnimandoSorteio(true);
-    setNumeroSorteado(null);
-
-    setTimeout(() => {
-      try {
-        const { sorteados, restantes } = sortearNumeros({
-          minimo: config.minimo,
-          maximo: config.maximo,
-          quantidade: config.quantidade,
-          semRepeticao,
-          disponiveis: [...numerosDisponiveis]
-        });
-
-        if (semRepeticao) {
-          setNumerosDisponiveis(restantes);
-        }
-
-        const resultado = sorteados.length === 1 ? sorteados[0] : sorteados;
-        setNumeroSorteado(resultado);
-
-        const novoItem = {
-          id: Date.now(),
-          numeros: sorteados,
-          timestamp: new Date().toLocaleTimeString('pt-BR'),
-          semRepeticao
-        };
-
-        setHistorico(prev => [novoItem, ...prev]);
-      } catch (error) {
-        alert(error instanceof Error ? error.message : String(error));
-      } finally {
-        setAnimandoSorteio(false);
-      }
-    }, 2000);
+  const iniciarEdicaoTitulo = () => {
+    setTituloAnterior(titulo); // salva o valor real antes de editar
   };
 
-  // Resetar sorteio
-  const resetarSorteio = () => {
-    setHistorico([]);
-    setNumeroSorteado(null);
-    setNumerosDisponiveis(criarFaixa(config.minimo, config.maximo));
-  };
-
-  // Salvar título editado
-  const salvarTitulo = () => {
-    setEditandoTitulo(false);
-  };
+  const salvarTitulo = () => setEditandoTitulo(false);
 
   const cancelarEdicaoTitulo = () => {
+    setTitulo(tituloAnterior); // restaura o valor anterior — sem hardcode
     setEditandoTitulo(false);
-    setEventoTitulo('Sorteio de Números');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <TituloEditable
-                titulo={eventoTitulo}
-                setTitulo={setEventoTitulo}
-                editando={editandoTitulo}
-                setEditando={setEditandoTitulo}
-                onSalvar={salvarTitulo}
-                onCancelar={cancelarEdicaoTitulo}
-              />
-            </div>
+            <TituloEditavel
+              titulo={titulo}
+              setTitulo={setTitulo}
+              editando={editandoTitulo}
+              setEditando={setEditandoTitulo}
+              onIniciarEdicao={iniciarEdicaoTitulo}
+              onSalvar={salvarTitulo}
+              onCancelar={cancelarEdicaoTitulo}
+            />
 
             <button
-              onClick={() => setMostrarConfig(!mostrarConfig)}
+              onClick={() => setMostrarConfig((v) => !v)}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
               <Settings size={18} />
@@ -124,20 +72,14 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
           <div className="lg:col-span-2">
             <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-
               {mostrarConfig && (
                 <SorteioConfig
                   config={config}
                   setConfig={setConfig}
                   resetarSorteio={resetarSorteio}
                   onFechar={() => setMostrarConfig(false)}
-                  tituloMarquee={tituloMarquee}
-                  setTituloMarquee={setTituloMarquee}
-                  marqueeSpeed={marqueeSpeed}
-                  setMarqueeSpeed={setMarqueeSpeed}
                 />
               )}
 
@@ -157,7 +99,10 @@ export default function SorteadorOnline({ tituloMarquee, setTituloMarquee, marqu
 
               {config.semRepeticao && (
                 <div className="mt-4 text-sm text-gray-600">
-                  Números disponíveis: {numerosDisponiveis.length}
+                  Números disponíveis:{' '}
+                  <span className="font-semibold text-blue-600">
+                    {numerosDisponiveis.length}
+                  </span>
                 </div>
               )}
             </div>

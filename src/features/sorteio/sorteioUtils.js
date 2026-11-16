@@ -29,14 +29,31 @@ export function getSecureRandomInt(min, max) {
   return min + (randomNumber % range);
 }
 
+/**
+ * Cria uma faixa de números inteiros de minimo até maximo (inclusivo)
+ * @param {number} minimo
+ * @param {number} maximo
+ * @returns {number[]}
+ */
 export function criarFaixa(minimo, maximo) {
-  const numeros = [];
-  for (let numero = minimo; numero <= maximo; numero++) {
-    numeros.push(numero);
-  }
-  return numeros;
+  return Array.from({ length: maximo - minimo + 1 }, (_, i) => minimo + i);
 }
 
+/**
+ * Alias para manter compatibilidade
+ */
+export const gerarIntervalo = criarFaixa;
+
+/**
+ * Sorteia números baseado nas configurações fornecidas
+ * @param {Object} params
+ * @param {number} params.minimo
+ * @param {number} params.maximo
+ * @param {number} params.quantidade
+ * @param {boolean} params.semRepeticao
+ * @param {number[]} params.disponiveis
+ * @returns {{ sorteados: number[], restantes: number[] }}
+ */
 export function sortearNumeros({
   minimo,
   maximo,

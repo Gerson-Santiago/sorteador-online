@@ -1,40 +1,28 @@
-// src/components/MarqueeHeader.jsx
-import React from 'react';
+// src/features/sorteio/componentes/MarqueeHeader.jsx
 
+/**
+ * Banner de topo com animação marquee via CSS transform.
+ * Usa keyframe definido no index.css (marquee-scroll).
+ * speed=0 deixa o texto estático, qualquer valor > 0 anima.
+ */
 export default function MarqueeHeader({ titulo, speed }) {
-  // Monta a string de style para animação (ou vazio se speed = 0)
-  const animationStyle =
-    speed > 0 
-      ? `marquee ${speed}s linear infinite`
-      : undefined;
-
   return (
     <div
-      className="bg-blue-600 text-white p-4 rounded mb-2 text-center font-bold"
-      style={{
-        fontSize: '2rem',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        position: 'relative',
-      }}
+      className="bg-blue-600 text-white p-4 mb-2 font-bold overflow-hidden text-center"
+      style={{ fontSize: '2rem' }}
     >
       <span
-        style={{
-          display: 'inline-block',
-          position: 'relative',
-          animation: animationStyle,
-        }}
+        style={
+          speed > 0
+            ? {
+                display: 'inline-block',
+                animation: `marquee-scroll ${speed}s linear infinite`,
+              }
+            : undefined
+        }
       >
         {titulo}
       </span>
-      <style>
-        {`
-          @keyframes marquee {
-            0% { left: 100%; }
-            100% { left: -100%; }
-          }
-        `}
-      </style>
     </div>
   );
 }

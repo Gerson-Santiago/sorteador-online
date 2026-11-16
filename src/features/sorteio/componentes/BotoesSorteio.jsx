@@ -1,13 +1,14 @@
 // src/features/sorteio/componentes/BotoesSorteio.jsx
-import React from 'react';
 import { Shuffle, RotateCcw } from 'lucide-react';
 
 export default function BotoesSorteio({
   onSortear,
   animandoSorteio,
   config,
-  numerosDisponiveis
+  numerosDisponiveis,
 }) {
+  const esgotado = config.semRepeticao && numerosDisponiveis.length === 0;
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center">
       <button
@@ -21,9 +22,7 @@ export default function BotoesSorteio({
 
       <button
         onClick={() => onSortear(true)}
-        disabled={
-          animandoSorteio || (config.semRepeticao && numerosDisponiveis.length === 0)
-        }
+        disabled={animandoSorteio || esgotado}
         className="flex items-center justify-center gap-3 px-8 py-4 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold text-lg shadow-lg"
       >
         <RotateCcw size={24} />

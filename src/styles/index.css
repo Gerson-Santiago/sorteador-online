@@ -2,3 +2,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Animação de marquee usando transform — correto e performático.
+   A abordagem anterior com `left` em position:relative não produzia
+   o efeito de scroll esperado. */
+@keyframes marquee-scroll {
+  0%   { transform: translateX(100vw); }
+  100% { transform: translateX(-100%); }
+}
