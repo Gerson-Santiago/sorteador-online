@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ZoomIn, ZoomOut } from 'lucide-react';
 import BotaoSortearSemRepetir from './BotaoSortearSemRepetir';
-import { MINI_PLAYER_CHANNEL, MINI_PLAYER_MESSAGE } from './miniPlayerProtocol';
+import {
+  MINI_PLAYER_CHANNEL,
+  MINI_PLAYER_MESSAGE,
+  MINI_PLAYER_ZOOM,
+  limitarZoomMiniPlayer,
+} from './miniPlayerProtocol';
 
 export default function MiniPlayer() {
   const canalRef = useRef(null);
   const [conectado, setConectado] = useState(false);
   const [desabilitado, setDesabilitado] = useState(true);
+  const [zoom, setZoom] = useState(MINI_PLAYER_ZOOM.DEFAULT);
 
   useEffect(() => {
     if (!('BroadcastChannel' in window)) return undefined;
@@ -41,22 +47,51 @@ export default function MiniPlayer() {
     canalRef.current?.postMessage({ type: MINI_PLAYER_MESSAGE.DRAW });
   };
 
+  const ajustarZoom = (delta) => {
+    setZoom((atual) => limitarZoomMiniPlayer(atual + delta));
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-3">
       <section className="mx-auto max-w-sm overflow-hidden rounded-xl bg-white shadow-lg">
-        <header className="flex items-center justify-between bg-blue-600 px-4 py-3 text-white">
+        <header className="flex items-center justify-between gap-2 bg-blue-600 px-3 py-3 text-white">
           <h1 className="font-semibold">Mini sorteador</h1>
-          <button
-            type="button"
-            onClick={() => window.close()}
-            aria-label="Fechar mini sorteador"
-            title="Fechar mini sorteador"
-            className="rounded p-1 hover:bg-blue-700"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={() => ajustarZoom(-MINI_PLAYER_ZOOM.STEP)}
+              disabled={zoom <= MINI_PLAYER_ZOOM.MIN}
+              aria-label="Diminuir zoom da mini janela"
+              title="Diminuir zoom"
+              className="rounded p-1 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ZoomOut size={18} />
+            </button>
+            <span className="min-w-10 text-center text-xs font-medium">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              type="button"
+              onClick={() => ajustarZoom(MINI_PLAYER_ZOOM.STEP)}
+              disabled={zoom >= MINI_PLAYER_ZOOM.MAX}
+              aria-label="Aumentar zoom da mini janela"
+              title="Aumentar zoom"
+              className="rounded p-1 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ZoomIn size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={() => window.close()}
+              aria-label="Fechar mini sorteador"
+              title="Fechar mini sorteador"
+              className="rounded p-1 hover:bg-blue-700"
+            >
+              <X size={20} />
+            </button>
+          </div>
         </header>
-        <div className="space-y-3 p-4">
+        <div className="space-y-3 p-4" style={{ zoom }}>
           <BotaoSortearSemRepetir
             onSortear={sortear}
             animandoSorteio={!conectado}

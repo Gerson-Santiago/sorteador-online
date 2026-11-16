@@ -7,7 +7,6 @@ export default function BotoesSorteio({
   animandoSorteio,
   config,
   numerosDisponiveis,
-  mostrarBotaoSemRepetir = true,
 }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -20,14 +19,12 @@ export default function BotoesSorteio({
         Sortear Agora
       </button>
 
-      {mostrarBotaoSemRepetir && (
-        <BotaoSortearSemRepetir
-          onSortear={onSortear}
-          animandoSorteio={animandoSorteio}
-          config={config}
-          numerosDisponiveis={numerosDisponiveis}
-        />
-      )}
+      <BotaoSortearSemRepetir
+        onSortear={onSortear}
+        animandoSorteio={animandoSorteio}
+        config={config}
+        numerosDisponiveis={numerosDisponiveis}
+      />
     </div>
   );
 }

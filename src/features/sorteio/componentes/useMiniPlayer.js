@@ -4,6 +4,7 @@ import {
   criarUrlMiniPlayer,
   MINI_PLAYER_CHANNEL,
   MINI_PLAYER_MESSAGE,
+  processarMensagemMiniPlayer,
 } from './miniPlayerProtocol';
 
 export function useMiniPlayer({
@@ -38,16 +39,12 @@ export function useMiniPlayer({
     const canal = new BroadcastChannel(MINI_PLAYER_CHANNEL);
     canalRef.current = canal;
     canal.onmessage = ({ data }) => {
-      if (data.type === MINI_PLAYER_MESSAGE.READY) {
-        canal.postMessage({
-          type: MINI_PLAYER_MESSAGE.STATE,
-          disabled: desabilitadoRef.current,
-        });
-      }
-
-      if (data.type === MINI_PLAYER_MESSAGE.DRAW && !desabilitadoRef.current) {
-        sortearRef.current(true);
-      }
+      processarMensagemMiniPlayer({
+        data,
+        desabilitado: desabilitadoRef.current,
+        sortear: (semRepeticao) => sortearRef.current(semRepeticao),
+        publicarEstado: (estado) => canal.postMessage(estado),
+      });
     };
 
     return () => {
