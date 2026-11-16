@@ -1,9 +1,11 @@
 // src/features/sorteio/componentes/DisplayNumeroSorteado.jsx
 
-export default function DisplayNumeroSorteado({ numero, animando }) {
+export default function DisplayNumeroSorteado({ numero, animando, apresentacao = false }) {
   return (
     <div
-      className={`inline-flex items-center justify-center w-72 h-72 mx-auto rounded-full border-8 transition-all duration-500 ${
+      className={`inline-flex items-center justify-center mx-auto rounded-full border-8 transition-all duration-500 ${
+        apresentacao ? 'w-80 h-80 sm:w-96 sm:h-96' : 'w-72 h-72'
+      } ${
         animando
           ? 'border-blue-300 bg-blue-50 animate-pulse'
           : 'border-blue-600 bg-gradient-to-br from-blue-500 to-blue-700'
@@ -16,13 +18,18 @@ export default function DisplayNumeroSorteado({ numero, animando }) {
           {Array.isArray(numero) ? (
             <div className="space-y-2">
               {numero.map((num, idx) => (
-                <div key={`num-${idx}`} className="text-4xl font-bold text-white">
+                <div
+                  key={`num-${idx}`}
+                  className={`${apresentacao ? 'text-5xl sm:text-6xl' : 'text-4xl'} font-bold text-white`}
+                >
                   {num}
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-7xl font-extrabold text-white">{numero}</div>
+            <div className={`${apresentacao ? 'text-8xl sm:text-9xl' : 'text-7xl'} font-extrabold text-white`}>
+              {numero}
+            </div>
           )}
         </div>
       ) : (

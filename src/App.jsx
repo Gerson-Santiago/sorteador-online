@@ -1,6 +1,6 @@
 // src/App.jsx
-import { EventoProvider, useEvento } from 'features/sorteio/EventoContext';
-import MarqueeHeader from 'features/sorteio/componentes/MarqueeHeader';
+import { EventoProvider } from 'features/sorteio/EventoContext';
+import MiniPlayer from 'features/sorteio/componentes/MiniPlayer';
 import SorteadorOnline from 'features/sorteio/SorteioPage';
 import AutorFooter from 'features/AutorFooter';
 
@@ -9,10 +9,12 @@ import AutorFooter from 'features/AutorFooter';
  * Separado de App para poder usar useEvento() dentro do provider.
  */
 function AppContent() {
-  const { marqueeTexto, marqueeSpeed } = useEvento();
+  const isMiniPlayer = new URLSearchParams(window.location.search).has('mini-player');
+
+  if (isMiniPlayer) return <MiniPlayer />;
+
   return (
     <div>
-      <MarqueeHeader titulo={marqueeTexto} speed={marqueeSpeed} />
       <SorteadorOnline />
       <AutorFooter />
     </div>
