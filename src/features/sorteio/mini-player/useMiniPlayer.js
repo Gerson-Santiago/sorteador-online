@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { semRepeticaoEsgotada } from './sorteioButtonUtils';
+import { semRepeticaoEsgotada } from '../componentes/sorteioButtonUtils';
 import {
   criarUrlMiniPlayer,
   MINI_PLAYER_CHANNEL,

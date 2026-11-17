@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMiniPlayer } from './componentes/useMiniPlayer';
+import { useMiniPlayer } from './useMiniPlayer';
 
 export function useModoJanela({ animandoSorteio, config, numerosDisponiveis, sortear }) {
   const [ativo, setAtivo] = useState(false);

@@ -7,7 +7,7 @@ import {
   MINI_PLAYER_ZOOM,
   limitarZoomMiniPlayer,
   processarMensagemMiniPlayer,
-} from '../../../src/features/sorteio/componentes/miniPlayerProtocol';
+} from '../../../src/features/sorteio/mini-player/miniPlayerProtocol';
 
 describe('criarUrlMiniPlayer', () => {
   it('adiciona a rota da mini janela sem perder parâmetros existentes', () => {

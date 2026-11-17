@@ -1,7 +1,9 @@
 // src/App.jsx
 import { EventoProvider } from 'features/sorteio/EventoContext';
-import MiniPlayer from 'features/sorteio/componentes/MiniPlayer';
-import { MINI_PLAYER_QUERY_PARAM } from 'features/sorteio/componentes/miniPlayerProtocol';
+import {
+  MiniPlayer,
+  MINI_PLAYER_QUERY_PARAM,
+} from 'features/sorteio/mini-player';
 import SorteadorOnline from 'features/sorteio/SorteioPage';
 import AutorFooter from 'features/AutorFooter';
 

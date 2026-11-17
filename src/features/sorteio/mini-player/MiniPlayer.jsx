@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { X, ZoomIn, ZoomOut } from 'lucide-react';
-import BotaoSortearSemRepetir from './BotaoSortearSemRepetir';
+import { ZoomIn, ZoomOut } from 'lucide-react';
+import BotaoSortearSemRepetir from '../componentes/BotaoSortearSemRepetir';
 import {
   MINI_PLAYER_CHANNEL,
   MINI_PLAYER_MESSAGE,
@@ -79,15 +79,6 @@ export default function MiniPlayer() {
               className="rounded p-1 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <ZoomIn size={18} />
-            </button>
-            <button
-              type="button"
-              onClick={() => window.close()}
-              aria-label="Fechar mini sorteador"
-              title="Fechar mini sorteador"
-              className="rounded p-1 hover:bg-blue-700"
-            >
-              <X size={20} />
             </button>
           </div>
         </header>

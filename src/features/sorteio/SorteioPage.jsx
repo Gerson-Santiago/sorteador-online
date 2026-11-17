@@ -1,7 +1,7 @@
 // src/features/sorteio/SorteioPage.jsx
 import { useState } from 'react';
 import { useSorteio } from './useSorteio';
-import { useModoJanela } from './useModoJanela';
+import { useModoJanela } from './mini-player';
 import { useEvento } from './EventoContext';
 import HistoricoSorteios from './HistoricoSorteios';
 import SorteioConfig from './SorteioConfig';
